@@ -6,7 +6,15 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Pencil, Trash2, Plus, GripVertical, Check, X } from "lucide-react"
-import { DndContext, DragEndEvent, closestCenter } from "@dnd-kit/core"
+import { 
+  DndContext, 
+  DragEndEvent, 
+  closestCenter,
+  TouchSensor,
+  MouseSensor,
+  useSensor,
+  useSensors
+} from "@dnd-kit/core"
 import { SortableContext, verticalListSortingStrategy, useSortable } from "@dnd-kit/sortable"
 import { CSS } from "@dnd-kit/utilities"
 
@@ -101,6 +109,16 @@ function SortableTask({
 
 export function TaskList() {
   const [tasks, setTasks] = useState<Task[]>([])
+  
+  const sensors = useSensors(
+    useSensor(MouseSensor),
+    useSensor(TouchSensor, {
+      activationConstraint: {
+        delay: 250,
+        tolerance: 5,
+      },
+    })
+  )
 
   const addTask = () => {
     const newTask: Task = {
@@ -152,7 +170,11 @@ export function TaskList() {
         </Button>
       </div>
       
-      <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+      <DndContext 
+        sensors={sensors}
+        collisionDetection={closestCenter} 
+        onDragEnd={handleDragEnd}
+      >
         <SortableContext items={tasks} strategy={verticalListSortingStrategy}>
           {tasks.map((task) => (
             <SortableTask 
