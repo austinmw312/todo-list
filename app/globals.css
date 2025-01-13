@@ -70,3 +70,18 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+.glow-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: -1;
+  background: radial-gradient(
+    800px circle at var(--mouse-x, 0) var(--mouse-y, 0),
+    rgba(139, 92, 246, 0.30),
+    transparent 60%
+  );
+}

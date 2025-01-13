@@ -4,7 +4,8 @@ import { Task } from "@/app/types/task"
 import { useState } from "react"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Button } from "@/components/ui/button"
-import { Pencil, Trash2, Plus, GripVertical } from "lucide-react"
+import { Input } from "@/components/ui/input"
+import { Pencil, Trash2, Plus, GripVertical, Check, X } from "lucide-react"
 import { DndContext, DragEndEvent, closestCenter } from "@dnd-kit/core"
 import { SortableContext, verticalListSortingStrategy, useSortable } from "@dnd-kit/sortable"
 import { CSS } from "@dnd-kit/utilities"
@@ -12,15 +13,29 @@ import { CSS } from "@dnd-kit/utilities"
 function SortableTask({ 
   task, 
   toggleTask, 
-  deleteTask 
+  deleteTask,
+  updateTask 
 }: { 
   task: Task; 
   toggleTask: (id: string) => void;
   deleteTask: (id: string) => void;
+  updateTask: (id: string, content: string) => void;
 }) {
+  const [isEditing, setIsEditing] = useState(false)
+  const [editValue, setEditValue] = useState(task.content)
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({
     id: task.id,
   })
+
+  const handleSave = () => {
+    updateTask(task.id, editValue)
+    setIsEditing(false)
+  }
+
+  const handleCancel = () => {
+    setEditValue(task.content)
+    setIsEditing(false)
+  }
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -41,13 +56,36 @@ function SortableTask({
         onCheckedChange={() => toggleTask(task.id)}
         className="data-[state=checked]:bg-green-500 data-[state=checked]:border-green-500"
       />
-      <span className={`flex-grow ${task.completed ? 'line-through text-green-500' : ''}`}>
-        {task.content}
-      </span>
+      {isEditing ? (
+        <div className="flex-grow flex items-center space-x-2">
+          <Input
+            value={editValue}
+            onChange={(e) => setEditValue(e.target.value)}
+            className="flex-grow"
+            autoFocus
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') handleSave()
+              if (e.key === 'Escape') handleCancel()
+            }}
+          />
+          <Button variant="ghost" size="icon" onClick={handleSave}>
+            <Check className="h-4 w-4" />
+          </Button>
+          <Button variant="ghost" size="icon" onClick={handleCancel}>
+            <X className="h-4 w-4" />
+          </Button>
+        </div>
+      ) : (
+        <span className={`flex-grow ${task.completed ? 'line-through text-green-500' : ''}`}>
+          {task.content}
+        </span>
+      )}
       <div className="flex space-x-2">
-        <Button variant="ghost" size="icon">
-          <Pencil className="h-4 w-4" />
-        </Button>
+        {!isEditing && (
+          <Button variant="ghost" size="icon" onClick={() => setIsEditing(true)}>
+            <Pencil className="h-4 w-4" />
+          </Button>
+        )}
         <Button 
           variant="ghost" 
           size="icon"
@@ -100,6 +138,12 @@ export function TaskList() {
     })
   }
 
+  const updateTask = (taskId: string, content: string) => {
+    setTasks(tasks.map(task =>
+      task.id === taskId ? { ...task, content } : task
+    ))
+  }
+
   return (
     <div className="space-y-4">
       <div className="flex justify-end">
@@ -116,6 +160,7 @@ export function TaskList() {
               task={task} 
               toggleTask={toggleTask}
               deleteTask={deleteTask}
+              updateTask={updateTask}
             />
           ))}
         </SortableContext>
