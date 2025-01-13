@@ -1,7 +1,7 @@
 "use client"
 
 import { Task } from "@/app/types/task"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -109,7 +109,24 @@ function SortableTask({
 
 export function TaskList() {
   const [tasks, setTasks] = useState<Task[]>([])
-  
+  const [isLoaded, setIsLoaded] = useState(false)
+
+  // Load tasks from localStorage on mount
+  useEffect(() => {
+    const saved = localStorage.getItem('tasks')
+    if (saved) {
+      setTasks(JSON.parse(saved))
+    }
+    setIsLoaded(true)
+  }, [])
+
+  // Save to localStorage whenever tasks change
+  useEffect(() => {
+    if (isLoaded) {
+      localStorage.setItem('tasks', JSON.stringify(tasks))
+    }
+  }, [tasks, isLoaded])
+
   const sensors = useSensors(
     useSensor(MouseSensor),
     useSensor(TouchSensor, {
@@ -160,6 +177,11 @@ export function TaskList() {
     setTasks(tasks.map(task =>
       task.id === taskId ? { ...task, content } : task
     ))
+  }
+
+  // Only render content after initial load
+  if (!isLoaded) {
+    return null
   }
 
   return (
