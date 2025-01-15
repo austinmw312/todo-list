@@ -81,7 +81,13 @@ body {
   z-index: -1;
   background: radial-gradient(
     800px circle at var(--mouse-x, 0) var(--mouse-y, 0),
-    rgba(139, 92, 246, 0.30),
-    transparent 60%
+    rgba(139, 92, 246, 0.20),
+    transparent 70%
   );
+}
+
+@media (max-width: 768px) {
+  .glow-container {
+    display: none;
+  }
 }

@@ -45,6 +45,11 @@ function SortableTask({
     setIsEditing(false)
   }
 
+  const handleStartEdit = () => {
+    setEditValue(task.content === "New Task" ? "" : task.content)
+    setIsEditing(true)
+  }
+
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
@@ -66,7 +71,7 @@ function SortableTask({
       <Checkbox 
         checked={task.completed}
         onCheckedChange={() => toggleTask(task.id)}
-        className="data-[state=checked]:bg-green-500 data-[state=checked]:border-green-500"
+        className="h-6 w-6 data-[state=checked]:bg-green-500 data-[state=checked]:border-green-500"
       />
       {isEditing ? (
         <div className="flex-grow flex items-center space-x-2">
@@ -94,7 +99,7 @@ function SortableTask({
       )}
       <div className="flex space-x-2">
         {!isEditing && (
-          <Button variant="ghost" size="icon" onClick={() => setIsEditing(true)}>
+          <Button variant="ghost" size="icon" onClick={handleStartEdit}>
             <Pencil className="h-4 w-4" />
           </Button>
         )}
