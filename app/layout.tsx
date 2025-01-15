@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { GlowContainer } from "./components/GlowContainer";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -17,8 +16,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark">
-      <body className={`${inter.className} bg-background text-foreground`}>
-        <GlowContainer />
+      <body className={`${inter.className} bg-background text-foreground min-h-screen bg-gradient-to-br from-purple-900/20 via-background to-background`}>
         {children}
       </body>
     </html>

@@ -56,8 +56,12 @@ function SortableTask({
       style={style}
       className="flex items-center space-x-4 p-4 border rounded-lg bg-card"
     >
-      <button {...attributes} {...listeners} className="cursor-grab active:cursor-grabbing">
-        <GripVertical className="h-4 w-4 text-muted-foreground" />
+      <button 
+        {...attributes} 
+        {...listeners} 
+        className="p-2 -m-2 touch-manipulation"
+      >
+        <GripVertical className="h-6 w-6 text-muted-foreground" />
       </button>
       <Checkbox 
         checked={task.completed}
@@ -131,8 +135,9 @@ export function TaskList() {
     useSensor(MouseSensor),
     useSensor(TouchSensor, {
       activationConstraint: {
-        delay: 250,
-        tolerance: 5,
+        delay: 0,
+        tolerance: 0,
+        distance: 0,
       },
     })
   )
